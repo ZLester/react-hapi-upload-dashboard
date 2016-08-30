@@ -1,13 +1,15 @@
-const mongoose = require('mongoose');
+const Mongoose = require('mongoose');
 const Lab = require('lab');
 const lab = exports.lab = Lab.script();
 const Code = require('code');
+
 const server = require('../server/server.js');
+
 const dbURI = 'mongodb://localhost/hopscotch';
 
 const clearDB = done => {
-  mongoose.connection.collections.users.remove(() => {
-    mongoose.connection.collections.images.remove(done);
+  Mongoose.connection.collections.users.remove(() => {
+    Mongoose.connection.collections.images.remove(done);
   });
 };
 
@@ -30,7 +32,7 @@ const stubUsers = [
 ];
 
 const stubImages = [
-  'gates.jpg',
-  'torvalds.jpg',
-  'woz.jpg',
+  'fixtures/gates.jpg',
+  'fixtures/torvalds.png',
+  'fixtures/woz.jpeg',
 ];
