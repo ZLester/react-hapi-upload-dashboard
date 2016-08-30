@@ -7,7 +7,7 @@ const NavTop = ({ handleUserCreateClick }) => (
   <Navbar>
     <Navbar.Header>
       <Navbar.Brand>
-        <LinkContainer to="/"><a>HopScotch Dashboard</a></LinkContainer>
+        <a>HopScotch Dashboard</a>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>

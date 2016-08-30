@@ -11,22 +11,21 @@ const generateUsersData = users => users.map(user => ({
   user,
 }));
 
-const formatImages = images => (
-  <div>
-    {images.map((image, index) => (
-      <a
-        key={index}
-        href={image.filepath}
-      >
+const formatImages = (handleImageClick, images) => {
+  return (
+    <div>
+      {images.map((image, index) => (
         <Image
+          key={index}
           className="Users-image-preview"
           src={image.filepath}
+          onClick={() => handleImageClick(image.filepath)}
           thumbnail
         />
-      </a>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  )
+};
 
 const generateControlIcon = (clickHandler, icon, id) => {
   const clickCb = () => clickHandler(id);
@@ -51,8 +50,9 @@ const formatControls = (handleImageUploadClick, handleUserDeleteClick, user) => 
   );
 };
 
-const Users = ({ users, handleImageUploadClick, handleUserDeleteClick }) => {
+const Users = ({ users, handleImageUploadClick, handleUserDeleteClick, handleImageClick }) => {
   const usersData = generateUsersData(users);
+  const formatImagesBound = formatImages.bind(null, handleImageClick);
   const formatControlsBound = formatControls.bind(null, handleImageUploadClick, handleUserDeleteClick);
   const tableOptions = {
     defaultSortName: 'id',
@@ -93,7 +93,7 @@ const Users = ({ users, handleImageUploadClick, handleUserDeleteClick }) => {
               <TableHeaderColumn
                 dataField="images"
                 dataAlign="center"
-                dataFormat={formatImages}
+                dataFormat={formatImagesBound}
               >
                 Images
               </TableHeaderColumn>
@@ -116,6 +116,7 @@ Users.propTypes = {
   users: PropTypes.array,
   handleImageUploadClick: PropTypes.func,
   handleUserDeleteClick: PropTypes.func,
+  handleImageClick: PropTypes.func,
 };
 
 export default Users;

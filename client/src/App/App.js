@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import NavbarTop from '../NavTop';
 import CreateUserModal from '../CreateUserModal';
 import ErrorModal from '../ErrorModal';
+import ImageModal from '../ImageModal';
 
 class App extends Component {
   constructor(props) {
@@ -10,20 +11,24 @@ class App extends Component {
     this.state = {
       users: [],
       targetUser: null,
+      targetImage: null,
       showErrorModal: false,
       showCreateUserModal: false,
+      showImageModal: false,
       firstName: '',
       lastName: '',
       phoneNumber: '',
       image: null,
     };
     this.fetchUsers = this.fetchUsers.bind(this);
+    this.handleImageClick = this.handleImageClick.bind(this);
     this.handleImageUploadClick = this.handleImageUploadClick.bind(this);
     this.handleUserCreateClick = this.handleUserCreateClick.bind(this);
     this.handleUserDeleteClick = this.handleUserDeleteClick.bind(this);
     this.handleErrorModalClose = this.handleErrorModalClose.bind(this);
-    this.handleCreateUserImageChange = this.handleCreateUserImageChange.bind(this);
+    this.handleImageModalClose = this.handleImageModalClose.bind(this);
     this.handleCreateUserModalClose = this.handleCreateUserModalClose.bind(this);
+    this.handleCreateUserImageChange = this.handleCreateUserImageChange.bind(this);
     this.handleCreateUserSubmit = this.handleCreateUserSubmit.bind(this);
     this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
     this.handleLastNameChange = this.handleLastNameChange.bind(this);
@@ -41,8 +46,8 @@ class App extends Component {
   fetchUsers() {
     fetch('/api/users/')
       .then(res => res.json())
-      .then(users => this.setState({ targetUser: null, users }))
-      .catch(() => this.setState({ targetUser: null, showErrorModal: true }));
+      .then(users => this.setState({ users }))
+      .catch(() => this.setState({ showErrorModal: true }));
   }
 
   updateUser(updatedUser) {
@@ -66,9 +71,8 @@ class App extends Component {
   }
 
   createUser(newUser) {
-    const users = this.state.users.slice();
-    users.push(newUser);
-    this.setState({ users });
+    const updatedUsers = [...this.state.users, newUser];
+    this.setState({ users: updatedUsers });
   }
 
   handleImageUploadClick(id) {
@@ -128,7 +132,11 @@ class App extends Component {
         this.setState({ loading: false });
         this.updateUser(updatedUser);
       })
-      .catch(() => this.setState({ showErrorModal: true }));
+      .catch(() => this.setState({ targetUser: null, showErrorModal: true }));
+  }
+
+  handleImageClick(src) {
+    this.setState({ targetImage: src, showImageModal: true });
   }
 
   handleFirstNameChange(e) {
@@ -155,6 +163,9 @@ class App extends Component {
     this.setState({ showCreateUserModal: false });
   }
 
+  handleImageModalClose() {
+    this.setState({ showImageModal: false });
+  }
 
   render() {
     return (
@@ -167,6 +178,7 @@ class App extends Component {
             users: this.state.users,
             handleImageUploadClick: this.handleImageUploadClick,
             handleUserDeleteClick: this.handleUserDeleteClick,
+            handleImageClick: this.handleImageClick,
           })}
         </div>
         <ErrorModal
@@ -181,6 +193,11 @@ class App extends Component {
           handleCreateUserImageChange={this.handleCreateUserImageChange}
           handleCreateUserModalClose={this.handleCreateUserModalClose}
           handleCreateUserSubmit={this.handleCreateUserSubmit}
+        />
+        <ImageModal
+          showImageModal={this.state.showImageModal}
+          handleImageModalClose={this.handleImageModalClose}
+          targetImage={this.state.targetImage}
         />
         <input
           ref="upload"

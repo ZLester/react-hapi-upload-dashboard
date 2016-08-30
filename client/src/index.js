@@ -9,6 +9,7 @@ render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Users} />
+      <Route path="/image" component={Image} />
     </Route>
   </Router>
 ), document.getElementById('root'));
