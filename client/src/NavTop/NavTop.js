@@ -7,7 +7,7 @@ const NavTop = ({ handleUserCreateClick }) => (
   <Navbar>
     <Navbar.Header>
       <Navbar.Brand>
-        <a>HopScotch Dashboard</a>
+        <a>React/Hapi Dashboard</a>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>
