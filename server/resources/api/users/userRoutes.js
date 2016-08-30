@@ -10,6 +10,7 @@ module.exports = server => {
         output: 'stream',
         parse: true,
         allow: 'multipart/form-data',
+        maxBytes: 10485760, // 10mb
       },
       handler: userController.createOne,
       validate: userValidation.validateCreateOne,
@@ -67,6 +68,7 @@ module.exports = server => {
         output: 'stream',
         parse: true,
         allow: 'multipart/form-data',
+        maxBytes: 10485760, // 10mb
       },
       handler: userController.addUserImage,
       validate: userValidation.validateAddImage,
