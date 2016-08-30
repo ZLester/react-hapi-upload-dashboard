@@ -4,8 +4,8 @@ module.exports = {
   PORT: process.env.PORT || 3000,
   ENV: process.env.NODE_ENV || 'dev',
   DB_URI: {
-    production: process.env.DB_URI,
-    dev: 'mongodb://localhost/hopscotch',
+    production: process.env.DB_URI || 'mongodb://localhost/reacthapidashboard',
+    dev: 'mongodb://localhost/reacthapidashboard',
   },
   LANG: process.env.LANG || 'en',
   STATIC_PATH: Path.join(__dirname, '../../dist/'),
