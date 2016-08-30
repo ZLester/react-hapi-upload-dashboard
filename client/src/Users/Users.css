@@ -12,6 +12,10 @@
   margin-right: 0.5vw;
 }
 
+.Users-image-preview:hover {
+  cursor: pointer;
+}
+
 /*Begin React Table CSS*/
 
 /*editor error animate*/
