@@ -10,7 +10,6 @@ class App extends Component {
     this.state = {
       users: [],
       targetUser: null,
-      loading: false,
       showErrorModal: false,
       showCreateUserModal: false,
       firstName: '',
@@ -40,11 +39,10 @@ class App extends Component {
   }
 
   fetchUsers() {
-    this.setState({ loading: true });
     fetch('/api/users/')
       .then(res => res.json())
-      .then(users => this.setState({ loading: false, targetUser: null, users }))
-      .catch(() => this.setState({ loading: false, targetUser: null, showErrorModal: true }));
+      .then(users => this.setState({ targetUser: null, users }))
+      .catch(() => this.setState({ targetUser: null, showErrorModal: true }));
   }
 
   updateUser(updatedUser) {
@@ -81,16 +79,12 @@ class App extends Component {
   }
 
   handleUserDeleteClick(id) {
-    this.setState({ loading: true });
     fetch(`/api/users/${id}`, {
       method: 'DELETE',
     })
       .then(res => res.json())
-      .then(deletedUser => {
-        this.setState({ loading: false });
-        this.deleteUser(deletedUser);
-      })
-      .catch(() => this.setState({ loading: false, targetUser: null, showErrorModal: true }));
+      .then(deletedUser => this.deleteUser(deletedUser))
+      .catch(() => this.setState({ targetUser: null, showErrorModal: true }));
   }
 
   handleUserCreateClick() {
@@ -109,17 +103,16 @@ class App extends Component {
     body.set('phoneNumber', phoneNumber);
     body.set('image', image);
 
-    this.setState({ loading: true });
     fetch('/api/users', {
       method: 'POST',
       body,
     })
       .then(res => res.json())
       .then(createdUser => {
-        this.setState({ loading: false, showCreateUserModal: false });
+        this.setState({ showCreateUserModal: false });
         this.createUser(createdUser);
       })
-      .catch(() => this.setState({ loading: false, showErrorModal: true }));
+      .catch(() => this.setState({ showErrorModal: true }));
   }
 
   uploadImage(e) {
@@ -135,7 +128,7 @@ class App extends Component {
         this.setState({ loading: false });
         this.updateUser(updatedUser);
       })
-      .catch(() => this.setState({ loading: false, showErrorModal: true }));
+      .catch(() => this.setState({ showErrorModal: true }));
   }
 
   handleFirstNameChange(e) {
