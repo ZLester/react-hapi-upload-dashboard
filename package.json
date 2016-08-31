@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/",
+    "test": "mocha",
     "dev": "webpack --config webpack-development.config.js --progress --colors",
     "dev-watch": "webpack --config webpack-development.config.js --progress --colors --watch",
     "build": "webpack --config webpack-production.config.js --progress --colors",
