@@ -67,19 +67,18 @@ const seedDb = users => (
     })
 );
 
-server.start(() => {
-  seedDb(stubUsers)
-    .then(() => {
-      server.stop(() => {
-        logger.info('Seeded Database');
-        process.exit();
-      });
-    })
-    .catch(err => {
-      server.stop(() => {
-        logger.error(err);
-        logger.error('Error Seeding Database');
-        process.exit();
-      });
-    })
-});
+seedDb(stubUsers)
+  .then(() => {
+    server.stop(() => {
+      logger.info('Seeded Database');
+      Mongoose.connection.close();
+    });
+  })
+  .catch(err => {
+    server.stop(() => {
+      logger.error(err);
+      logger.error('Error Seeding Database');
+      Mongoose.connection.close();
+    });
+  })
+
