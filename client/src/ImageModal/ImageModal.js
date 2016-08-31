@@ -7,7 +7,7 @@ const ImageModal = ({ showImageModal, handleImageModalClose, targetImage }) => (
       <Modal.Title>Image Detail</Modal.Title>
     </Modal.Header>
     <Modal.Body>
-      <Image src={targetImage} />
+      <Image className="center-block" src={targetImage} responsive />
     </Modal.Body>
   </Modal>
 );
