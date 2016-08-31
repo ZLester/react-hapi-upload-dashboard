@@ -3,10 +3,8 @@ const Path = require('path');
 module.exports = {
   PORT: process.env.PORT || 3000,
   ENV: process.env.NODE_ENV || 'dev',
-  DB_URI: {
-    production: process.env.DB_URI || 'mongodb://localhost/reacthapidashboard',
-    dev: 'mongodb://localhost/reacthapidashboard',
-  },
+  DB_URI: process.env.MONGODB_PORT_27017_TCP_ADDR + process.env.MONGODB_PORT_27017_TCP_PORT || 'localhost/',
+  DB_NAME: process.env.DB_NAME || 'reacthapidashboard',
   LANG: process.env.LANG || 'en',
   STATIC_PATH: Path.join(__dirname, '../../dist/'),
   STORAGE_PATH: Path.join(__dirname, '../../dist/images/'),

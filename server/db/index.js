@@ -1,7 +1,7 @@
 const Mongoose = require('mongoose');
 Mongoose.Promise = require('bluebird');
-const { ENV, DB_URI } = require('../env');
-const mongoUri = DB_URI[ENV];
+const { DB_URI, DB_NAME } = require('../env');
+const mongoUri = `mongodb://${DB_URI}${DB_NAME}`;
 
 const connection = Mongoose.connect(mongoUri);
 
