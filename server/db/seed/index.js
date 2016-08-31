@@ -43,12 +43,13 @@ const deleteUsers = () => (
 );
 
 const seedDb = users => (
-  // Delete all images in /dist/images
-  exec(`rm -r ${STORAGE_PATH} && mkdir ${STORAGE_PATH}`)
+  // Create image directory if it doesn't already exist
+  // Delete all images in /dist/images and remake directory
+  exec(`mkdir ${STORAGE_PATH} && rm -r ${STORAGE_PATH} && mkdir ${STORAGE_PATH}`)
     .then(() => deleteUsers())
     .then(() => {
-      const createUsers = users.map(user => {
-        return new Promise((resolve, reject) => {
+      const createUsers = users.map(user => (
+        new Promise((resolve, reject) => {
           request(server.listener).post('/api/users')
             .type('form')
             .field('firstName', user.firstName)
@@ -61,24 +62,25 @@ const seedDb = users => (
               }
               resolve(res);
             });
-          });
-      })
+        })
+      ));
       return Promise.all(createUsers);
     })
 );
 
-seedDb(stubUsers)
-  .then(() => {
-    server.stop(() => {
-      logger.info('Seeded Database');
-      Mongoose.connection.close();
+server.start(() => {
+  seedDb(stubUsers)
+    .then(() => {
+      server.stop(() => {
+        logger.info('Seeded Database');
+        Mongoose.connection.close();
+      });
+    })
+    .catch(err => {
+      server.stop(() => {
+        logger.error(err);
+        logger.error('Error Seeding Database');
+        Mongoose.connection.close();
+      });
     });
-  })
-  .catch(err => {
-    server.stop(() => {
-      logger.error(err);
-      logger.error('Error Seeding Database');
-      Mongoose.connection.close();
-    });
-  })
-
+});
