@@ -4,30 +4,14 @@ services:
   mongo:
     image: mongo
 
-  seed:
-    build: .
-    volumes:
-     - .:/usr/src/app
-    command: npm run seed
-    image: hapidashboard
-    links:
-      - mongo
-    depends_on:
-      - mongo
-    environment:
-      PORT: 3000
-      MONGO: mongo
-
   hapidashboard:
     build: .
-    volumes:
-     - .:/usr/src/app
     command: npm run start
     ports:
       - "3000:3000"
-    links:
-      - mongo
     depends_on:
+      - mongo  
+    links:
       - mongo
     environment:
       PORT: 3000
