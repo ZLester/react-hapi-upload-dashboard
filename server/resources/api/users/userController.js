@@ -74,8 +74,8 @@ exports.deleteOne = (req, reply) => {
         return handleError(reply, notFound, 404);
       }
       // Remove all images associated with the user
-      const imageRemoval = removedUser.images.map(image => Image.findByIdAndRemove(image._id));
-      return Promise.all(imageRemoval)
+      const removedAssociatedImages = removedUser.images.map(image => Image.findByIdAndRemove(image._id));
+      return Promise.all(removedAssociatedImages)
         .spread(() => handleResponse(reply, removedUser, 200));
     })
     .catch(err => handleError(reply, internal, 500, err));
