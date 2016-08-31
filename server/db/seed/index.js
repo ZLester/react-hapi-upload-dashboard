@@ -43,9 +43,9 @@ const deleteUsers = () => (
 );
 
 const seedDb = users => (
-  // Create image directory if it doesn't already exist
+  // Try and create image storage directory
   // Delete all images in /dist/images and remake directory
-  exec(`mkdir ${STORAGE_PATH} && rm -r ${STORAGE_PATH} && mkdir ${STORAGE_PATH}`)
+  exec(`mkdir -p ${STORAGE_PATH} && rm -r ${STORAGE_PATH} && mkdir ${STORAGE_PATH}`)
     .then(() => deleteUsers())
     .then(() => {
       const createUsers = users.map(user => (
