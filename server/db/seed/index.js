@@ -11,48 +11,45 @@ const stubUsers = [
     firstName: 'Bill',
     lastName: 'Gates',
     phoneNumber: '5554441234',
+    imagePath: './gates.jpg',
   },
   {
     firstName: 'Steve',
     lastName: 'Wozniak',
     phoneNumber: '2225551234',
+    './woz.jpeg',
   },
   {
     firstName: 'Linus',
     lastName: 'Torvalds',
     phoneNumber: '3337771234',
+    './torvalds.png',
   },
 ];
 
-const stubImages = [
-  './gates.jpg',
-  './torvalds.png',
-  './woz.jpeg',
-];
-
-const deleteUsers = () => {
-  return new Promise((resolve, reject) => {
+const deleteUsers = () => (
+  new Promise((resolve, reject) => {
     request(server.listener).del('/api/users')
-    .end((err, res) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(res);
-    });
+      .end((err, res) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(res);
+      });
   });
-};
+);
 
 const seedDb = (users, images) => {
   return deleteUsers()
     .then(() => {
-      const createUsers = stubUsers.map((user, index) => {
+      const createUsers = stubUsers.map(user => {
         return new Promise((resolve, reject) => {
           request(server.listener).post('/api/users')
             .type('form')
             .field('firstName', user.firstName)
             .field('lastName', user.lastName)
             .field('phoneNumber', user.phoneNumber)
-            .attach('image', Path.join(__dirname, stubImages[index]))
+            .attach('image', Path.join(__dirname, user.imagePath))
             .end((err, res) => {
               if (err) {
                 return reject(err);
