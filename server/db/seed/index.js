@@ -3,8 +3,11 @@ const Promise = require('bluebird');
 const Path = require('path');
 const request = require('supertest');
 const logger = require('winston');
+const exec = Promise.promisify(require('child_process').exec);
 
 const server = require('../../server.js');
+
+const { STORAGE_PATH } = require('../../env');
 
 const stubUsers = [
   {
@@ -17,13 +20,13 @@ const stubUsers = [
     firstName: 'Steve',
     lastName: 'Wozniak',
     phoneNumber: '2225551234',
-    './woz.jpeg',
+    imagePath: './woz.jpeg',
   },
   {
     firstName: 'Linus',
     lastName: 'Torvalds',
     phoneNumber: '3337771234',
-    './torvalds.png',
+    imagePath: './torvalds.png',
   },
 ];
 
@@ -36,13 +39,15 @@ const deleteUsers = () => (
         }
         resolve(res);
       });
-  });
+  })
 );
 
-const seedDb = (users, images) => {
-  return deleteUsers()
+const seedDb = users => (
+  // Delete all images in /dist/images
+  exec(`rm -r ${STORAGE_PATH} && mkdir ${STORAGE_PATH}`)
+    .then(() => deleteUsers())
     .then(() => {
-      const createUsers = stubUsers.map(user => {
+      const createUsers = users.map(user => {
         return new Promise((resolve, reject) => {
           request(server.listener).post('/api/users')
             .type('form')
@@ -59,11 +64,11 @@ const seedDb = (users, images) => {
           });
       })
       return Promise.all(createUsers);
-    });
-};
+    })
+);
 
 server.start(() => {
-  seedDb(stubUsers, stubImages)
+  seedDb(stubUsers)
     .then(() => {
       server.stop(() => {
         logger.info('Seeded Database');
