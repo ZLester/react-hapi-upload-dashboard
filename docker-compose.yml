@@ -6,7 +6,8 @@ services:
 
   hapidashboard:
     build: .
-    command: npm run start
+    image: hapidashboard
+    command: bash -c "npm run seed && npm start"
     ports:
       - "3000:3000"
     depends_on:

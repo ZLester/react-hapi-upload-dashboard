@@ -12,5 +12,4 @@
 - Run `npm start` in the repo to launch the service
 
 ### To run via docker:
-- Clone down the repo and run `docker build -t hapidashboard .`
 - Run `docker-compose up` to launch the service
