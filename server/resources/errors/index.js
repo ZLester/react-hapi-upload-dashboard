@@ -1,4 +1,4 @@
-const { LANG } = require('../../env');
+const { LANGUAGE } = require('../../env');
 
 const errors = {
   500: {
@@ -24,12 +24,12 @@ const messages = {
 
 exports.internal = {
   statusCode: 500,
-  error: errors[500][LANG],
-  message: messages[500][LANG],
+  error: errors[500][LANGUAGE],
+  message: messages[500][LANGUAGE],
 };
 
 exports.notFound = {
   statusCode: 404,
-  error: errors[404][LANG],
-  message: messages[404][LANG],
+  error: errors[404][LANGUAGE],
+  message: messages[404][LANGUAGE],
 };

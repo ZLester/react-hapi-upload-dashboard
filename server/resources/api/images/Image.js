@@ -8,6 +8,9 @@ const imageSchema = new Mongoose.Schema({
   filepath: {
     type: String,
   },
+  filename: {
+    type: String,
+  },
   headers: {
     type: Object,
   },

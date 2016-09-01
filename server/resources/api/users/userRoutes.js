@@ -77,7 +77,7 @@ module.exports = server => {
 
   server.route({
     method: 'DELETE',
-    path: '/api/users/{uId}/images/{iId}',
+    path: '/api/users/{userId}/images/{imageId}',
     config: {
       handler: userController.removeUserImage,
       validate: userValidation.validateRemoveImage,

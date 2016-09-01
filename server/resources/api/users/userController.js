@@ -13,7 +13,11 @@ const saveUserImage = (user, image) => (
   new Promise((resolve, reject) => {
     const { filename, headers } = image.hapi;
     // Create image instance with metadata
-    const newImage = new Image({ user: user._id, headers });
+    const newImage = new Image({
+      user: user._id,
+      filename,
+      headers,
+    });
     // Add file path to instance for later retrieval
     newImage.filepath = RETRIEVAL_PATH + newImage._id + filename;
     const storagepath = STORAGE_PATH + newImage._id + filename;
@@ -69,12 +73,19 @@ exports.delete = (req, reply) => {
 exports.deleteOne = (req, reply) => {
   const { id } = req.params;
   User.findByIdAndRemove(id)
+    .populate('images')
     .then(removedUser => {
       if (!removedUser) {
         return handleError(reply, notFound, 404);
       }
       // Remove all images associated with the user
-      const removedAssociatedImages = removedUser.images.map(image => Image.findByIdAndRemove(image._id));
+      const removedAssociatedImages = removedUser.images.reduce((promises, image) => {
+        // Remove from Mongo
+        promises.push(Image.findByIdAndRemove(image._id));
+        // Remove from filesystem
+        promises.push(fs.unlinkAsync(STORAGE_PATH + image._id + image.filename));
+        return promises;
+      }, []);
       return Promise.all(removedAssociatedImages)
         .spread(() => handleResponse(reply, removedUser, 200));
     })
@@ -114,20 +125,13 @@ exports.addUserImage = (req, reply) => {
 
 exports.removeUserImage = (req, reply) => {
   const { userId, imageId } = req.params;
-  User.findById(userId)
-    .then(foundUser => {
-      if (!foundUser) {
+  Promise.all([User.findById(userId), Image.findById(imageId)])
+    .spread((foundUser, foundImage) => {
+      if (!foundUser || !foundImage) {
         return handleError(reply, notFound, 404);
       }
-      // Check if requested image is in User's images
-      const image = foundUser.images.id(imageId);
-      if (!image) {
-        return handleError(reply, notFound, 404);
-      }
-      // Remove reference to image in User's images property
-      image.remove();
-      // Delete image from collection
-      return Promise.all([image, Image.removeById(image._id), foundUser.save()])
+      // Delete image from collection/filesystem and update User
+      return Promise.all([foundImage, Image.findByIdAndRemove(imageId), fs.unlinkAsync(STORAGE_PATH + foundImage._id + foundImage.filename), foundUser.save()])
         .spread(removedImage => handleResponse(reply, removedImage));
     })
     .catch(err => handleError(reply, internal, 500, err));

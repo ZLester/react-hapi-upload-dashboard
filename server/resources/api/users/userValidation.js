@@ -32,7 +32,7 @@ exports.validateAddImage = {
 
 exports.validateRemoveImage = {
   params: {
-    uId: isValidDocId,
-    iId: isValidDocId,
+    userId: isValidDocId,
+    imageId: isValidDocId,
   },
 };
