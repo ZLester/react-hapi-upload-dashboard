@@ -1,10 +1,17 @@
 import React, { PropTypes } from 'react';
 import { Modal, Button, Row, Col, Form, FormGroup, FormControl, InputGroup } from 'react-bootstrap';
+import './CreateUserModal.css';
 
 const CreateUserModal = (props) => (
   <Modal show={props.showCreateUserModal} onHide={props.handleCreateUserModalClose}>
     <Modal.Header closeButton>
-      <Modal.Title>Add User</Modal.Title>
+      <Modal.Title>
+        <i
+          className="CreateUserModal-title-icon fa fa-user-plus"
+          aria-hidden="true"
+        />
+        Add User
+      </Modal.Title>
     </Modal.Header>
     <Modal.Body>
       <Row>

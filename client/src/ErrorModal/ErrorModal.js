@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 const ErrorModal = ({ showErrorModal, handleErrorModalClose }) => (
   <Modal show={showErrorModal} onHide={handleErrorModalClose}>
-    <Modal.Header closeButton>
+    <Modal.Header className="panel-danger" closeButton>
       <Modal.Title>Error</Modal.Title>
     </Modal.Header>
     <Modal.Body>

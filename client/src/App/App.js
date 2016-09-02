@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
+import { bindAll } from 'class-bind';
 import NavbarTop from '../NavTop';
 import CreateUserModal from '../CreateUserModal';
 import ErrorModal from '../ErrorModal';
@@ -11,6 +12,7 @@ class App extends Component {
     this.state = {
       users: [],
       targetUser: null,
+      selectedUser: null,
       targetImage: null,
       showErrorModal: false,
       showCreateUserModal: false,
@@ -19,24 +21,9 @@ class App extends Component {
       lastName: '',
       phoneNumber: '',
       image: null,
+      loading: false,
     };
-    this.fetchUsers = this.fetchUsers.bind(this);
-    this.handleImageClick = this.handleImageClick.bind(this);
-    this.handleImageUploadClick = this.handleImageUploadClick.bind(this);
-    this.handleUserCreateClick = this.handleUserCreateClick.bind(this);
-    this.handleUserDeleteClick = this.handleUserDeleteClick.bind(this);
-    this.handleErrorModalClose = this.handleErrorModalClose.bind(this);
-    this.handleImageModalClose = this.handleImageModalClose.bind(this);
-    this.handleCreateUserModalClose = this.handleCreateUserModalClose.bind(this);
-    this.handleCreateUserImageChange = this.handleCreateUserImageChange.bind(this);
-    this.handleCreateUserSubmit = this.handleCreateUserSubmit.bind(this);
-    this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
-    this.handleLastNameChange = this.handleLastNameChange.bind(this);
-    this.handlePhoneNumberChange = this.handlePhoneNumberChange.bind(this);
-    this.uploadImage = this.uploadImage.bind(this);
-    this.updateUser = this.updateUser.bind(this);
-    this.deleteUser = this.deleteUser.bind(this);
-    this.createUser = this.createUser.bind(this);
+    bindAll(App.prototype);
   }
 
   componentDidMount() {
@@ -47,7 +34,7 @@ class App extends Component {
     fetch('/api/users/')
       .then(res => res.json())
       .then(users => this.setState({ users }))
-      .catch(() => this.setState({ showErrorModal: true }));
+      .catch(() => this.handleError());
   }
 
   updateUser(updatedUser) {
@@ -82,12 +69,17 @@ class App extends Component {
     });
   }
 
-  handleUserDeleteClick(id) {
+  handleUserDeleteClick(id, callback) {
     fetch(`/api/users/${id}`, {
       method: 'DELETE',
     })
       .then(res => res.json())
-      .then(deletedUser => this.deleteUser(deletedUser))
+      .then(deletedUser => {
+        this.deleteUser(deletedUser);
+        if (callback) {
+          callback();
+        }
+      })
       .catch(() => this.setState({ targetUser: null, showErrorModal: true }));
   }
 
@@ -116,7 +108,7 @@ class App extends Component {
         this.setState({ showCreateUserModal: false });
         this.createUser(createdUser);
       })
-      .catch(() => this.setState({ showErrorModal: true }));
+      .catch(() => this.handleError());
   }
 
   uploadImage(e) {
@@ -132,7 +124,17 @@ class App extends Component {
         this.setState({ loading: false });
         this.updateUser(updatedUser);
       })
-      .catch(() => this.setState({ targetUser: null, showErrorModal: true }));
+      .catch(() => this.handleError());
+  }
+
+  handleUserIdClick(id) {
+    const user = this.state.users.reduce((foundUser, curUser) => {
+      if (curUser._id === id) {
+        return curUser;
+      }
+      return foundUser;
+    }, null);
+    this.setState({ selectedUser: user });
   }
 
   handleImageClick(src) {
@@ -167,6 +169,18 @@ class App extends Component {
     this.setState({ showImageModal: false });
   }
 
+  handleError() {
+    this.setState({ targetUser: null, showErrorModal: true });
+  }
+
+  startLoading() {
+    this.setState({ loading: true });
+  }
+
+  stopLoading() {
+    this.setState({ loading: false });
+  }
+
   render() {
     return (
       <div className="App">
@@ -176,9 +190,14 @@ class App extends Component {
         <div>
           {this.props.children && React.cloneElement(this.props.children, {
             users: this.state.users,
+            selectedUser: this.state.selectedUser,
             handleImageUploadClick: this.handleImageUploadClick,
+            handleUserIdClick: this.handleUserIdClick,
             handleUserDeleteClick: this.handleUserDeleteClick,
             handleImageClick: this.handleImageClick,
+            handleError: this.handleError,
+            startLoading: this.startLoading,
+            stopLoading: this.stopLoading,
           })}
         </div>
         <ErrorModal

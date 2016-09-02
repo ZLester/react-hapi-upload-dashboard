@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { Link } from 'react-router';
 import { Image, Grid, Row, Col } from 'react-bootstrap';
 import './Users.css';
 
@@ -11,21 +12,31 @@ const generateUsersData = users => users.map(user => ({
   user,
 }));
 
-const formatImages = (handleImageClick, images) => {
-  return (
-    <div>
-      {images.map((image, index) => (
-        <Image
-          key={index}
-          className="Users-image-preview"
-          src={image.filepath}
-          onClick={() => handleImageClick(image.filepath)}
-          thumbnail
-        />
-      ))}
-    </div>
-  )
+const formatId = (handleUserIdClick, id) => {
+  const link = (
+    <Link
+      to={{ pathname: `/users/${id}` }}
+      onClick={() => handleUserIdClick(id)}
+    >
+      {id}
+    </Link>
+  );
+  return (<div>{link}</div>);
 };
+
+const formatImages = (handleImageClick, images) => (
+  <div>
+    {images.map((image, index) => (
+      <Image
+        key={index}
+        className="Users-image-preview"
+        src={image.filepath}
+        onClick={() => handleImageClick(image.filepath)}
+        thumbnail
+      />
+    ))}
+  </div>
+);
 
 const generateControlIcon = (clickHandler, icon, id) => {
   const clickCb = () => clickHandler(id);
@@ -39,9 +50,9 @@ const generateControlIcon = (clickHandler, icon, id) => {
   );
 };
 
-const formatControls = (handleImageUploadClick, handleUserDeleteClick, user) => {
-  const UploadImage = generateControlIcon(handleImageUploadClick, 'upload', user._id);
-  const RemoveUser = generateControlIcon(handleUserDeleteClick, 'remove', user._id);
+const formatControls = (handleImageUploadClick, handleUserDeleteClick, handleUserIdClick, user) => {
+  const UploadImage = generateControlIcon(handleImageUploadClick, 'upload', user.id);
+  const RemoveUser = generateControlIcon(handleUserDeleteClick, 'remove', user.id);
   return (
     <div>
       {UploadImage}
@@ -50,8 +61,9 @@ const formatControls = (handleImageUploadClick, handleUserDeleteClick, user) => 
   );
 };
 
-const Users = ({ users, handleImageUploadClick, handleUserDeleteClick, handleImageClick }) => {
+const Users = ({ users, handleImageUploadClick, handleUserDeleteClick, handleImageClick, handleUserIdClick }) => {
   const usersData = generateUsersData(users);
+  const formatIdBound = formatId.bind(null, handleUserIdClick);
   const formatImagesBound = formatImages.bind(null, handleImageClick);
   const formatControlsBound = formatControls.bind(null, handleImageUploadClick, handleUserDeleteClick);
   const tableOptions = {
@@ -74,6 +86,7 @@ const Users = ({ users, handleImageUploadClick, handleUserDeleteClick, handleIma
                 dataAlign="center"
                 isKey
                 dataSort
+                dataFormat={formatIdBound}
               >
                 ID
               </TableHeaderColumn>
