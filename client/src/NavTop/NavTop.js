@@ -7,7 +7,7 @@ const NavTop = ({ handleUserCreateClick }) => (
   <Navbar>
     <Navbar.Header>
       <Navbar.Brand>
-        <Link to={{ pathname: '/' }}>React/Hapi Dashboard</Link>
+        <Link to={{ pathname: '/' }}><i className="NavTop-display-icon fa fa-dashboard" aria-hidden="true"/>Dashboard</Link>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>
